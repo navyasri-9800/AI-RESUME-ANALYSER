@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ATS Analysis Report | AI Resume Analyzer{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h2 class="fw-bold mb-1"><i class="bi bi-bar-chart-line-fill text-primary me-2"></i> ATS Match Analysis Report</h2>
+                <p class="text-muted small mb-0">Job Title: <strong>{{ analysis.job_description.title|default:"Target Job" }}</strong> | Resume: <strong>{{ analysis.resume.title|default:"Resume" }}</strong></p>
+            </div>
+            <div class="d-flex gap-2 no-print">
+                <button class="btn btn-outline-secondary btn-sm btn-copy" data-copy-target="#recommendations-container">
+                    <i class="bi bi-clipboard me-1"></i> Copy Suggestions
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary-gradient btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Hero Score Circular Gauge Card -->
+        <div class="card-custom p-4 mb-4 text-center">
+            <div class="row align-items-center">
+                <div class="col-md-5 mb-3 mb-md-0">
+                    <div class="score-gauge-container">
+                        <svg class="score-gauge-svg" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#6366f1" />
+                                    <stop offset="100%" stop-color="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="score-gauge-bg" cx="60" cy="60" r="50" />
+                            <circle class="score-gauge-circle" id="score-gauge-circle" cx="60" cy="60" r="50" />
+                        </svg>
+                        <div class="score-gauge-text">
+                            <div class="score-number-val" id="ats-score-value" data-score="{{ analysis.ats_score }}">0</div>
+                            <div class="score-label-text">ATS Match</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7 text-md-start">
+                    <h4 class="fw-bold mb-2">
+                        {% if analysis.ats_score >= 75 %}
+                            <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Excellent Alignment!</span>
+                        {% elif analysis.ats_score >= 50 %}
+                            <span class="text-warning"><i class="bi bi-exclamation-triangle-fill me-1"></i> Moderate Match</span>
+                        {% else %}
+                            <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Low Compatibility</span>
+                        {% endif %}
+                    </h4>
+
+                    <p class="text-muted mb-3">
+                        {% if analysis.ats_score >= 75 %}
+                            Your resume strongly matches the key keywords and required competencies for this job description. You have a high probability of clearing automated ATS screening.
+                        {% elif analysis.ats_score >= 50 %}
+                            Your resume covers basic requirements but is missing a few key skills and keywords. Review missing skills below to optimize your match score.
+                        {% else %}
+                            Your resume is missing significant keywords and skills mentioned in the job description. Consider tweaking your resume skills and summary.
+                        {% endif %}
+                    </p>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                            Score: {{ analysis.ats_score }} / 100
+                        </span>
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2">
+                            Analyzed: {{ analysis.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Breakdown Row -->
+        <div class="row g-4 mb-4">
+            <!-- Matched Skills -->
+            <div class="col-md-6">
+                <div class="card-custom p-4 h-100 border-start border-success border-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                        <h5 class="fw-bold mb-0">Matched Skills & Keywords</h5>
+                    </div>
+
+                    {% if analysis.matched_skills %}
+                        <div class="skills-wrapper">
+                            {% for skill in analysis.matched_skills.split %}
+                                <span class="skill-pill skill-pill-matched">
+                                    <i class="bi bi-check2"></i> {{ skill|cut:"," }}
+                                </span>
+                            {% empty %}
+                                <span class="skill-pill skill-pill-matched">
+                                    <i class="bi bi-check2"></i> {{ analysis.matched_skills }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted small mb-0">No specific matching skills detected.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Missing Skills -->
+            <div class="col-md-6">
+                <div class="card-custom p-4 h-100 border-start border-danger border-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-exclamation-octagon-fill text-danger fs-4"></i>
+                        <h5 class="fw-bold mb-0">Missing Keywords & Skills</h5>
+                    </div>
+
+                    {% if analysis.missing_skills %}
+                        <div class="skills-wrapper">
+                            {% for skill in analysis.missing_skills.split %}
+                                <span class="skill-pill skill-pill-missing">
+                                    <i class="bi bi-x"></i> {{ skill|cut:"," }}
+                                </span>
+                            {% empty %}
+                                <span class="skill-pill skill-pill-missing">
+                                    <i class="bi bi-x"></i> {{ analysis.missing_skills }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-success small fw-medium">
+                            <i class="bi bi-shield-check"></i> Great job! No critical missing skills detected.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Card -->
+        <div class="card-custom p-4 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold mb-0"><i class="bi bi-lightbulb-fill text-warning me-2"></i> Optimization Recommendations</h5>
+            </div>
+            
+            <div id="recommendations-container" class="card bg-body-tertiary border-0 p-3">
+                <div class="lh-lg">
+                    {{ analysis.recommendations|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Buttons -->
+        <div class="d-flex justify-content-between align-items-center no-print">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-house-door me-1"></i> Back to Dashboard
+            </a>
+            <a href="{% url 'history' %}" class="btn btn-primary-gradient">
+                <i class="bi bi-clock-history me-1"></i> View Full History
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

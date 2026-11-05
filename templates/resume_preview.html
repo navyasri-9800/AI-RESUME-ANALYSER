@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resume.full_name }} - Resume Preview{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+
+        <!-- Top Action Bar (hidden when printing) -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 no-print">
+            <div>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="print-resume-btn">
+                    <i class="bi bi-printer-fill me-1"></i> Print / Export to PDF
+                </button>
+                <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-primary-gradient btn-sm">
+                    <i class="bi bi-cpu-fill me-1"></i> Analyze Against Job
+                </a>
+            </div>
+        </div>
+
+        <!-- Resume Document Container -->
+        <div class="resume-document">
+
+            <!-- Resume Header -->
+            <div class="resume-header text-center">
+                <h1 class="fw-bold mb-2 text-dark">{{ resume.full_name }}</h1>
+                <div class="d-flex justify-content-center flex-wrap gap-3 text-muted small">
+                    {% if resume.email %}<span><i class="bi bi-envelope-fill me-1"></i> {{ resume.email }}</span>{% endif %}
+                    {% if resume.phone %}<span><i class="bi bi-telephone-fill me-1"></i> {{ resume.phone }}</span>{% endif %}
+                    {% if resume.location %}<span><i class="bi bi-geo-alt-fill me-1"></i> {{ resume.location }}</span>{% endif %}
+                </div>
+                
+                {% if resume.linkedin or resume.github %}
+                <div class="d-flex justify-content-center flex-wrap gap-3 text-muted small mt-2">
+                    {% if resume.linkedin %}<span><i class="bi bi-linkedin me-1"></i> {{ resume.linkedin }}</span>{% endif %}
+                    {% if resume.github %}<span><i class="bi bi-github me-1"></i> {{ resume.github }}</span>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Professional Summary -->
+            {% if resume.summary %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Professional Summary</h6>
+                <p class="mb-0 text-secondary lh-base">{{ resume.summary }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Technical Skills -->
+            {% if resume.skills %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Technical Skills</h6>
+                <div class="skills-wrapper">
+                    {% for skill in resume.skills.split %}
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-medium fs-6">
+                            {{ skill|cut:"," }}
+                        </span>
+                    {% empty %}
+                        <span class="badge bg-light text-dark border px-3 py-2 fw-medium fs-6">
+                            {{ resume.skills }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Work Experience -->
+            {% if resume.experience %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Work Experience</h6>
+                <div class="lh-lg text-secondary">
+                    {{ resume.experience|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Key Projects -->
+            {% if resume.projects %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Projects</h6>
+                <div class="lh-lg text-secondary">
+                    {{ resume.projects|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Education -->
+            {% if resume.education %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Education</h6>
+                <div class="lh-lg text-secondary">
+                    {{ resume.education|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if resume.certifications %}
+            <div class="mb-4">
+                <h6 class="resume-section-title">Certifications & Training</h6>
+                <div class="lh-lg text-secondary">
+                    {{ resume.certifications|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- Bottom Actions (No Print) -->
+        <div class="mt-4 d-flex justify-content-between align-items-center no-print">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="bi bi-house-door me-1"></i> Back to Dashboard
+            </a>
+            <a href="{% url 'resume_analysis' resume.id %}" class="btn btn-primary-gradient">
+                <i class="bi bi-graph-up-arrow me-1"></i> Analyze Score
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

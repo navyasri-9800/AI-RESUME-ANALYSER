@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account | AI Resume Analyzer{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center my-4">
+    <div class="col-md-7 col-lg-6">
+        <div class="card-custom p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="navbar-brand-badge mb-3 d-inline-flex fs-4">
+                    <i class="bi bi-file-earmark-person-fill"></i> AI Resume
+                </div>
+                <h3 class="fw-bold mb-1">Create Your Account</h3>
+                <p class="text-muted small">Get started with AI-driven ATS resume optimization</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                <button class="btn btn-primary-gradient w-100 py-2 mb-3" type="submit">
+                    <i class="bi bi-person-plus me-1"></i> Register Account
+                </button>
+
+                <div class="text-center">
+                    <p class="text-muted small mb-0">
+                        Already have an account? <a href="{% url 'login' %}" class="fw-bold text-primary">Login here</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

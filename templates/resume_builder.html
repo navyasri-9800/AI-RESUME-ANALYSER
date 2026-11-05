@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Your Resume | AI Resume Builder{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card-custom p-4 p-md-5 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom flex-wrap gap-2">
+                <div>
+                    <h3 class="fw-bold mb-1"><i class="bi bi-file-earmark-plus-fill text-primary me-2"></i> Create Your Resume</h3>
+                    <p class="text-muted small mb-0">Fill out your professional details below to generate an ATS-optimized resume.</p>
+                </div>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Section 1: Basic Information -->
+                <div class="mb-4">
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-person-lines-fill me-2"></i> Header & Contact Details</h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Resume Title / Label *</label>
+                            {{ form.title }}
+                            <small class="text-muted">e.g. "Senior Software Engineer Resume"</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            {{ form.full_name }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Email Address *</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Location (City, State)</label>
+                            {{ form.location }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">LinkedIn Profile URL</label>
+                            {{ form.linkedin }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">GitHub / Portfolio URL</label>
+                            {{ form.github }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Section 2: Summary & Skills -->
+                <div class="mb-4">
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-file-text-fill me-2"></i> Summary & Technical Skills</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Professional Summary</label>
+                        {{ form.summary }}
+                        <small class="text-muted">Write 2-4 sentences highlighting your core background and achievements.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Technical & Soft Skills *</label>
+                        {{ form.skills }}
+                        <small class="text-muted">Comma-separated list (e.g. Python, Django, REST APIs, SQL, Git, Leadership)</small>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Section 3: Experience & Education -->
+                <div class="mb-4">
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-briefcase-fill me-2"></i> Experience, Education & Projects</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Work Experience</label>
+                        {{ form.experience }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Key Projects</label>
+                        {{ form.projects }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Education</label>
+                        {{ form.education }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Certifications & Training</label>
+                        {{ form.certifications }}
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'dashboard' %}" class="btn btn-light px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary-gradient px-4 py-2">
+                        <i class="bi bi-check-lg me-1"></i> Save & Preview Resume
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
